@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perplexity AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #121212;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #ffdb58;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+        }
+        @media (max-width: 400px){
+           h1{
+             font-size: 1.7rem
+           }
+        }
+
+        #question-area {
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            min-height: 3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        #answer-options {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-option {
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .answer-option:hover {
+            background-color: #45a049;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .answer-option:disabled {
+            background-color: #808080;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #feedback {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            min-height: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #next-question {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        #next-question:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        #next-question:disabled {
+            background-color: #808080;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #restart-game {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #dc3545;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        #restart-game:hover {
+            background-color: #c82333;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+        }
+         #restart-game:disabled {
+            background-color: #808080;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #score-display {
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        #ranking-display {
+            font-size: 1rem;
+            color: #ffffff;
+            margin-top: 1rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        /* Styles for larger screens */
+        @media (min-width: 800px) {
+            .container {
+                padding: 30px;
+            }
+            h1 {
+                font-size: 3rem;
+            }
+            #question-area {
+                font-size: 1.4rem;
+            }
+            .answer-option {
+                font-size: 1.2rem;
+                padding: 1rem;
+            }
+            #next-question, #restart-game {
+                font-size: 1.2rem;
+                padding: 1rem 2rem;
+            }
+            #feedback {
+                font-size: 1.4rem;
+            }
+            #score-display {
+                font-size: 1.4rem;
+            }
+             #ranking-display {
+                font-size: 1.2rem;
+            }
+        }
+        /* Keyframe animation for glowing text */
+        @keyframes glow {
+            0% { text-shadow: 0 0 8px rgba(255, 215, 0, 0.8); }
+            50% { text-shadow: 0 0 16px rgba(255, 215, 0, 1); }
+            100% { text-shadow: 0 0 8px rgba(255, 215, 0, 0.8); }
+        }
+        .glowing-title {
+            animation: glow 2s infinite;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="glowing-title">Perplexity AI</h1>
+        <div id="score-display">Score: <span id="score">0</span></div>
+        <div id="question-area"></div>
+        <div id="answer-options">
+            <button class="answer-option" id="option-1" disabled></button>
+            <button class="answer-option" id="option-2" disabled></button>
+            <button class="answer-option" id="option-3" disabled></button>
+        </div>
+        <div id="feedback"></div>
+        <button id="next-question" disabled>Next Question</button>
+        <button id="restart-game" style="display:none;">Restart Game</button>
+        <div id="ranking-display"></div>
+    </div>
+
+    <script>
+       // --- Configuration ---
+        const API_BASE_URL = "https://opentdb.com/"; // Use Open Trivia Database API
+        const SCORE_STORAGE_KEY = "perplexityAIScores"; // Key for local storage
+
+        // --- Game State ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let gameStarted = false;
+        let answeredCorrectly = false;
+        let gameData = []; // To store questions from API
+        let playerName = ""; // You can extend to ask for player's name
+
+        // --- DOM Elements ---
+        const questionArea = document.getElementById("question-area");
+        const answerOptions = document.getElementsByClassName("answer-option");
+        const feedback = document.getElementById("feedback");
+        const nextQuestionButton = document.getElementById("next-question");
+        const scoreDisplay = document.getElementById("score");
+        const restartGameButton = document.getElementById("restart-game");
+        const rankingDisplay = document.getElementById("ranking-display");
+
+        // --- Helper Functions ---
+
+        /**
+         * Fetches questions from the Open Trivia Database API.
+         * @async
+         * @returns {Promise<Array>} - An array of question objects.
+         */
+        async function fetchQuestions() {
+            try {
+                const amount = 10; // Number of questions to fetch
+                const difficulty = "medium"; // You can change difficulty: easy, medium, hard
+                const type = "multiple"; // Get multiple choice questions
+                const apiUrl = `${API_BASE_URL}api.php?amount=${amount}&difficulty=${difficulty}&type=${type}`;
+
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.results; // Array of questions
+            } catch (error) {
+                console.error("Failed to fetch questions:", error);
+                questionArea.textContent = "Failed to load questions. Please check your internet connection and try again.";
+                return []; // Return empty array to prevent errors
+            }
+        }
+
+        /**
+         * Processes the API response to create a usable question format.
+         * @param {Array} apiQuestions - Array of questions from the API.
+         * @returns {Array} - Array of processed question objects.
+         */
+        function processQuestions(apiQuestions) {
+          if (!apiQuestions || apiQuestions.length === 0) {
+            return [];
+          }
+            return apiQuestions.map(apiQuestion => {
+                const correctAnswer = apiQuestion.correct_answer;
+                const incorrectAnswers = apiQuestion.incorrect_answers;
+                const allOptions = [correctAnswer, ...incorrectAnswers];
+                // Shuffle the options to randomize the order
+                allOptions.sort(() => Math.random() - 0.5);
+
+                return {
+                    question: decodeHTML(apiQuestion.question),
+                    answerOptions: allOptions.map(option => decodeHTML(option)),
+                    correctAnswer: decodeHTML(correctAnswer),
+                };
+            });
+        }
+
+        /**
+         * Decodes HTML entities in a string.  The API returns HTML encoded strings.
+         * @param {string} input - The HTML encoded string.
+         * @returns {string} - The decoded string.
+         */
+        function decodeHTML(input) {
+            const doc = new DOMParser().parseFromString(input, "text/html");
+            return doc.body.textContent;
+        }
+
+
+
+        /**
+         * Displays the current question and its answer options.
+         */
+        function displayQuestion() {
+            if (gameData.length === 0) {
+                return; // Prevent error if no questions are loaded
+            }
+            const currentQuestion = gameData[currentQuestionIndex];
+
+            questionArea.textContent = currentQuestion.question;
+            feedback.textContent = "";
+            nextQuestionButton.disabled = true;
+            nextQuestionButton.textContent = "Next Question";
+
+            for (let i = 0; i < answerOptions.length; i++) {
+                answerOptions[i].textContent = currentQuestion.answerOptions[i];
+                answerOptions[i].disabled = false;
+                answerOptions[i].style.backgroundColor = "#4CAF50";
+            }
+            answeredCorrectly = false;
+        }
+
+        /**
+         * Handles the selection of an answer option.
+         * @param {string} selectedAnswer - The answer option selected by the user.
+         */
+        function handleAnswerSelection(selectedAnswer) {
+            if (answeredCorrectly) return;
+
+            if (gameData.length === 0) {
+                return; // Prevent error if no questions
+            }
+
+            const currentQuestion = gameData[currentQuestionIndex];
+
+            if (selectedAnswer === currentQuestion.correctAnswer) {
+                score++;
+                scoreDisplay.textContent = score;
+                feedback.textContent = "Correct!";
+                feedback.style.color = "#00FF00";
+                answeredCorrectly = true;
+            } else {
+                feedback.textContent = "Incorrect!";
+                feedback.style.color = "#FF0000";
+            }
+
+            for (let i = 0; i < answerOptions.length; i++) {
+                answerOptions[i].disabled = true;
+                if (answerOptions[i].textContent === currentQuestion.correctAnswer) {
+                    answerOptions[i].style.backgroundColor = "#008000";
+                } else if (answerOptions[i].textContent === selectedAnswer) {
+                    answerOptions[i].style.backgroundColor = "#FF0000";
+                }
+            }
+
+            nextQuestionButton.disabled = false;
+        }
+
+        /**
+         * Displays the next question or ends the game.
+         */
+        function handleNextQuestion() {
+            if (currentQuestionIndex < gameData.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        /**
+         * Ends the game, saves the score, and displays the final score.
+         */
+        function endGame() {
+            questionArea.textContent = "Game Over!";
+            feedback.textContent = `Your final score is ${score} out of ${gameData.length}.`;
+            feedback.style.color = "#FFFFFF";
+            answerOptions[0].style.display = "none";
+            answerOptions[1].style.display = "none";
+            answerOptions[2].style.display = "none";
+            nextQuestionButton.style.display = "none";
+            restartGameButton.style.display = "inline-block";
+            saveScore();
+            displayRankings();
+        }
+
+        /**
+         * Restarts the game.
+         */
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            gameStarted = true;
+            scoreDisplay.textContent = score;
+            feedback.textContent = "";
+            answerOptions[0].style.display = "block";
+            answerOptions[1].style.display = "block";
+            answerOptions[2].style.display = "block";
+            nextQuestionButton.style.display = "block";
+            nextQuestionButton.disabled = true;
+            restartGameButton.style.display = "none";
+            loadQuestionsAndStart(); // Fetch questions again
+        }
+
+        // --- Score Management ---
+
+        /**
+         * Saves the player's score to local storage.
+         */
+        function saveScore() {
+            const scores = JSON.parse(localStorage.getItem(SCORE_STORAGE_KEY)) || [];
+            scores.push({ name: playerName || "Player", score }); //  playerName
+            scores.sort((a, b) => b.score - a.score); // Sort descending
+            localStorage.setItem(SCORE_STORAGE_KEY, JSON.stringify(scores));
+        }
+
+        /**
+        * Retrieves the player's score from local storage.
+        */
+        function getScores() {
+            const scores = JSON.parse(localStorage.getItem(SCORE_STORAGE_KEY)) || [];
+            return scores;
+        }
+
+        /**
+         * Displays the score rankings.
+         */
+        function displayRankings() {
+            const scores = getScores();
+            let rankingText = "<h2>Top Scores</h2>";
+            if (scores.length === 0) {
+                rankingText += "No scores yet!";
+            } else {
+                rankingText += "<ul>";
+                scores.forEach((entry, index) => {
+                    rankingText += `<li>${index + 1}. ${entry.name}: ${entry.score}</li>`;
+                });
+                rankingText += "</ul>";
+            }
+            rankingDisplay.innerHTML = rankingText;
+        }
+
+        // --- Event Listeners ---
+        nextQuestionButton.addEventListener("click", handleNextQuestion);
+        restartGameButton.addEventListener("click", restartGame);
+
+        for (let i = 0; i < answerOptions.length; i++) {
+            answerOptions[i].addEventListener("click", () => {
+                handleAnswerSelection(answerOptions[i].textContent);
+            });
+        }
+
+       // --- Game Initialization ---
+        /**
+         * Initializes the game: fetches questions and starts the game.
+         */
+        async function loadQuestionsAndStart() {
+            gameData = await fetchQuestions(); // Fetch the questions
+            if (gameData.length > 0) {
+                gameData = processQuestions(gameData);
+                startGame(); // only start if we have questions
+            }
+            else{
+               // error message is already shown, but we can also disable restart.
+               restartGameButton.disabled = true;
+            }
+        }
+
+        function startGame() {
+            gameStarted = true;
+            displayQuestion();
+            displayRankings(); // Show rankings on initial load
+        }
+
+        loadQuestionsAndStart(); // Start the game when the page loads
+
+    </script>
+</body>
+</html>
